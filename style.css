@@ -42,13 +42,16 @@ body{
     border-radius: 3px;
     cursor: pointer;
 }
-.btn_filter:focus{
-    outline: none;
+.save{
+    color: red;
 }
-.btn_filter:focus{
+.selected{
     background-color: #4A6FFF;
     color: #fff;
+    outline: none;
 }
+
+
 
 .container_search{
     position: relative;
