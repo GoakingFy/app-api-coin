@@ -21,6 +21,8 @@ body{
     background-color: #fff;
     padding: 40px;
     overflow: hidden;
+    box-shadow: -20px -20px  0px 0px #CCD5F9;
+    border-radius: 20px;
 }
 .container_filter_search{
     display: flex;
@@ -79,12 +81,28 @@ body{
 #search_inp:focus{
 outline: none;
 }
+
 .container_results{
     margin-top: 45px;
     overflow-y: scroll;
    
     
 }
+.container_results::-webkit-scrollbar-track {
+    
+    background-color: transparent;
+  }
+
+.container_results::-webkit-scrollbar {
+    width: 10px;
+  }
+
+.container_results::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    
+    background-color: #CCD5F9;
+  
+  }
 .result{
     width: 100%;
     display: flex;
