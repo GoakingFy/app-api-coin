@@ -4,7 +4,15 @@ import {
   $btn_usdt,
   $btn_filter,
   $btn_filterSave,
+  $inp_search
 } from "./varDOM.js";
+
+
+const getData = async (url)=>{
+    let data = await fetch(url)
+    let res = await data.json()
+  return res
+}
 
 const getAllCoin = async (type, page, maxResults) => {
   let data = await fetch(
@@ -77,6 +85,24 @@ function saveCoin(btns) {
   }
 }
 
+
+//Agregar animación de espera y crear flujo de erroes
+
+ function searchCoin(idCoin){
+    
+   getData(`https://api.coingecko.com/api/v3/search?query=${idCoin}`)
+    .then((res)=>{
+       
+           res.coins.forEach((resultCoins)=>{
+          
+              printResult(resultCoins.name,resultCoins.thumb,resultCoins.id)
+           })
+    } 
+   )
+}
+
+searchCoin("b")
+
 document.addEventListener("DOMContentLoades", getAllCoin("usd", "1", "100"));
 
 $btn_filter.forEach((btn) => {
@@ -107,3 +133,19 @@ $btn_filter.forEach((btn) => {
     }
   });
 });
+
+
+$inp_search.addEventListener("keyup" , ()=>{
+    let valueSearch = $inp_search.value
+    if(valueSearch != ""){
+        $container_results.innerHTML = ""
+    searchCoin(valueSearch)
+    }else{
+        $container_results.innerHTML = ""
+        getAllCoin("usd", "1", "100");
+    }
+    
+})
+
+
+//Arreglar nombre de los simbolos largos
