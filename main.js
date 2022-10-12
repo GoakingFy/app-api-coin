@@ -7,6 +7,7 @@ import {
   $inp_search
 } from "./varDOM.js";
 
+loader()
 
 const getData = async (url)=>{
     let data = await fetch(url)
@@ -19,13 +20,44 @@ const getAllCoin = async (type, page, maxResults) => {
     `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${type}&order=market_cap_desc&per_page=${maxResults}&page=${page}&sparkline=false1`
   );
   let res = await data.json();
+  $container_results.innerHTML = ``
   //console.log(res)
   res.forEach((results) => {
     printResult(results.symbol, results.image, results.id);
-  });
+     
+});
   const $btn_save = document.querySelectorAll(".btn_save");
+  const $result = document.querySelectorAll(".result > span")
+  
   saveCoin($btn_save);
+  console.log($result)
+
+  //Prueba de acceso a monedas. CAMBIAR
+
+  $result.forEach((result)=>{
+    result.addEventListener("click" , ()=>{
+      console.log("hola")
+        let coin = result.getAttribute("data-coin")
+        window.location.assign(`coin.html?coin=${coin}`)
+    })
+  })
+ 
 };
+
+
+function loader(){
+  $container_results.innerHTML = ""
+  $container_results.innerHTML = `
+  <div class="container_loader">
+  <div class="waveform">
+  <div class="waveform__bar"></div>
+  <div class="waveform__bar"></div>
+  <div class="waveform__bar"></div>
+  <div class="waveform__bar"></div>
+</div>
+</div>
+  ` 
+}
 
 const getSavedCoins = async (nameCoin) => {
   let data = await fetch(`https://api.coingecko.com/api/v3/coins/${nameCoin}`);
@@ -36,15 +68,18 @@ const getSavedCoins = async (nameCoin) => {
 };
 
 //Agregar el atributo id en el resultado
+//MEJORAR LOGICA DE ATRIBUTOS
 
 function printResult(name, img, id) {
   let newReslt = document.createElement("div");
   newReslt.classList.add("result");
+  
   newReslt.innerHTML = `
-    <span><img src="${img}" alt="img_${name}" class="thumbnail"> ${name}</span>
-    <button class="btn_save far fa-heart" data-id="${id}" data-coin="${name}"></button>
+    <span data-coin="${id}"><img src="${img}" alt="img_${name}" class="thumbnail"> <p>${name}</p></span>
+    <button class="btn_save far  fa-heart" data-id="${id}" data-coin="${name}"></button>
     `;
   $container_results.appendChild(newReslt);
+ 
 }
 
 //Mejorar función
@@ -66,7 +101,7 @@ function saveCoin(btns) {
     for (let z = 0; z < btns.length; z++) {
       console.log();
       if (savedCoins.includes(btns[z].getAttribute("data-id"))) {
-        btns[z].classList.add("save");
+        btns[z].classList.add("save" , "fa-solid");
       }
     }
   }
@@ -75,8 +110,9 @@ function saveCoin(btns) {
     let data_coin = btns[i].getAttribute("data-id");
 
     btns[i].addEventListener("click", () => {
+      console.log("hola")
       if (!btns[i].classList.contains("save")) {
-        btns[i].classList.add("save");
+        btns[i].classList.add("save" , "fa-solid");
         savedCoins.push(data_coin);
         console.log(savedCoins);
         window.localStorage.setItem("savedCoins", JSON.stringify(savedCoins));
@@ -93,17 +129,24 @@ function saveCoin(btns) {
    getData(`https://api.coingecko.com/api/v3/search?query=${idCoin}`)
     .then((res)=>{
        
-           res.coins.forEach((resultCoins)=>{
+        if(res.coins.length > 0){
+            res.coins.forEach((resultCoins)=>{
           
-              printResult(resultCoins.name,resultCoins.thumb,resultCoins.id)
-           })
+                printResult(resultCoins.symbol,resultCoins.thumb,resultCoins.id)
+             })
+        }else{
+            $container_results.innerHTML = `No hay resultados`
+        }
+           
     } 
-   )
+   ).catch((error)=>{
+    console.error(`Could no get coins ${error}` )
+   })
 }
 
-searchCoin("b")
 
-document.addEventListener("DOMContentLoades", getAllCoin("usd", "1", "100"));
+
+document.addEventListener("DOMContentLoaded", getAllCoin("usd", "1", "100"));
 
 $btn_filter.forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -116,6 +159,7 @@ $btn_filter.forEach((btn) => {
     if ($btn_all.classList.contains("selected")) {
       $container_results.innerHTML = "";
       getAllCoin("usd", "1", "100");
+      
     } else if ($btn_usdt.classList.contains("selected")) {
       $container_results.innerHTML = "";
       getAllCoin("eur", "1", "20");
@@ -146,6 +190,10 @@ $inp_search.addEventListener("keyup" , ()=>{
     }
     
 })
+
+
+
+
 
 
 //Arreglar nombre de los simbolos largos
