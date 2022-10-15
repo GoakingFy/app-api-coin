@@ -1,5 +1,4 @@
-export const $container_results = document.querySelector(".container_results")
-export const $result = document.querySelectorAll(".result")
+export const $container_results = document.querySelector(".container_results") 
 export const $btn_filter = document.querySelectorAll(".btn_filter")
 export const $btn_all = document.getElementById("btn_all")
 export const $btn_usdt = document.getElementById("btn_usdt")

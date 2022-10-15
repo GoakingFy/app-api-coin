@@ -7,13 +7,17 @@ import {
   $inp_search
 } from "./varDOM.js";
 
+  import {
+    saveCoin,
+    getSavedCoins
+  } from "./modules/save.js";
+
+import { printResult } from "./modules/results.js";
+import {searchCoin} from "./modules/search.js"
+
 loader()
 
-const getData = async (url)=>{
-    let data = await fetch(url)
-    let res = await data.json()
-  return res
-}
+
 
 const getAllCoin = async (type, page, maxResults) => {
   let data = await fetch(
@@ -30,7 +34,7 @@ const getAllCoin = async (type, page, maxResults) => {
   const $result = document.querySelectorAll(".result > span")
   
   saveCoin($btn_save);
-  console.log($result)
+ 
 
   //Prueba de acceso a monedas. CAMBIAR
 
@@ -58,92 +62,6 @@ function loader(){
 </div>
   ` 
 }
-
-const getSavedCoins = async (nameCoin) => {
-  let data = await fetch(`https://api.coingecko.com/api/v3/coins/${nameCoin}`);
-  let res = await data.json();
-  console.log(res);
-
-  printResult(res.symbol, res.image.small, res.id);
-};
-
-//Agregar el atributo id en el resultado
-//MEJORAR LOGICA DE ATRIBUTOS
-
-function printResult(name, img, id) {
-  let newReslt = document.createElement("div");
-  newReslt.classList.add("result");
-  
-  newReslt.innerHTML = `
-    <span data-coin="${id}"><img src="${img}" alt="img_${name}" class="thumbnail"> <p>${name}</p></span>
-    <button class="btn_save far  fa-heart" data-id="${id}" data-coin="${name}"></button>
-    `;
-  $container_results.appendChild(newReslt);
- 
-}
-
-//Mejorar función
-// Cambiar la logica de la función para obtener el data del resultado
-//Agreagar función para quitar el guardado
-
-function saveCoin(btns) {
-  //window.localStorage.clear()
-
-  let savedCoins = [];
-
-  if (window.localStorage.getItem("savedCoins")) {
-    let getsavedCoins = JSON.parse(window.localStorage.getItem("savedCoins"));
-
-    for (let i = 0; i < getsavedCoins.length; i++) {
-      savedCoins.push(getsavedCoins[i]);
-    }
-
-    for (let z = 0; z < btns.length; z++) {
-      console.log();
-      if (savedCoins.includes(btns[z].getAttribute("data-id"))) {
-        btns[z].classList.add("save" , "fa-solid");
-      }
-    }
-  }
-
-  for (let i = 0; i < btns.length; i++) {
-    let data_coin = btns[i].getAttribute("data-id");
-
-    btns[i].addEventListener("click", () => {
-      console.log("hola")
-      if (!btns[i].classList.contains("save")) {
-        btns[i].classList.add("save" , "fa-solid");
-        savedCoins.push(data_coin);
-        console.log(savedCoins);
-        window.localStorage.setItem("savedCoins", JSON.stringify(savedCoins));
-      }
-    });
-  }
-}
-
-
-//Agregar animación de espera y crear flujo de erroes
-
- function searchCoin(idCoin){
-    
-   getData(`https://api.coingecko.com/api/v3/search?query=${idCoin}`)
-    .then((res)=>{
-       
-        if(res.coins.length > 0){
-            res.coins.forEach((resultCoins)=>{
-          
-                printResult(resultCoins.symbol,resultCoins.thumb,resultCoins.id)
-             })
-        }else{
-            $container_results.innerHTML = `No hay resultados`
-        }
-           
-    } 
-   ).catch((error)=>{
-    console.error(`Could no get coins ${error}` )
-   })
-}
-
 
 
 document.addEventListener("DOMContentLoaded", getAllCoin("usd", "1", "100"));
@@ -180,18 +98,22 @@ $btn_filter.forEach((btn) => {
 
 
 $inp_search.addEventListener("keyup" , ()=>{
+ 
+  loader()
+  
     let valueSearch = $inp_search.value
+    
     if(valueSearch != ""){
+      
         $container_results.innerHTML = ""
     searchCoin(valueSearch)
     }else{
+      
         $container_results.innerHTML = ""
         getAllCoin("usd", "1", "100");
     }
     
 })
-
-
 
 
 
