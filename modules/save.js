@@ -17,7 +17,7 @@ export  function saveCoin(btns) {
       }
   
       for (let z = 0; z < btns.length; z++) {
-        console.log();
+     
         if (savedCoins.includes(btns[z].getAttribute("data-id"))) {
           btns[z].classList.add("save" , "fa-solid");
         }
@@ -28,12 +28,21 @@ export  function saveCoin(btns) {
       let data_coin = btns[i].getAttribute("data-id");
   
       btns[i].addEventListener("click", () => {
-        console.log("hola")
+       
         if (!btns[i].classList.contains("save")) {
           btns[i].classList.add("save" , "fa-solid");
           savedCoins.push(data_coin);
           console.log(savedCoins);
           window.localStorage.setItem("savedCoins", JSON.stringify(savedCoins));
+        }else{
+         
+          btns[i].classList.remove("save" , "fa-solid");
+          let prueba = JSON.parse(window.localStorage.getItem("savedCoins"))
+          let pos = prueba.indexOf(data_coin)
+          console.log(prueba)
+          prueba.splice(pos, pos + 1)
+          savedCoins = prueba
+          console.log(savedCoins)          
         }
       });
     }
