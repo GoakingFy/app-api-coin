@@ -30,7 +30,7 @@ const getData = async (url)=>{
         res.json()
        .then(response =>{
           if(response){
-            console.log(response)
+           $container_results.innerHTML = ``
             printResult(response)
           }
         })
@@ -55,12 +55,27 @@ $inp_search.addEventListener("keyup" , ()=>{
       $container_results.innerHTML = ``
       getData(urlAll)
     }
-    
-    
-    
 
 })
 
+$btn_filter.forEach((btn)=>{
+ btn.addEventListener("click" , (e)=>{
+    let query = e.target.id
+    if(query == "btn_usdt"){
+     $btn_filter.forEach((btn)=> btn.classList.remove("selected"))
+      e.target.classList.add("selected")
+      searchCoin("usdt")
+    }else if(query == "btn_busd"){
+      $btn_filter.forEach((btn)=> btn.classList.remove("selected"))
+      e.target.classList.add("selected")
+      searchCoin("busd")
+    }else if(query == "btn_all"){
+      $btn_filter.forEach((btn)=> btn.classList.remove("selected"))
+      e.target.classList.add("selected")
+      getData(urlAll)
+    }
+ })
+})
 
 
 
