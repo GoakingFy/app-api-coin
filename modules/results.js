@@ -29,6 +29,7 @@ data.forEach(coin => {
 
 
   export function printError(error){
+    $container_results.innerHTML = ``
       let containerError = document.createElement("div")
       let iconExclamation = document.createElement("i")
       let errorMsg = document.createElement("p")
